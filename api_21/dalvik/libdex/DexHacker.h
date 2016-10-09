@@ -8,31 +8,33 @@
 
 #ifndef ____DexHacker__
 #define ____DexHacker__
-#include <iostream>
 #include <string.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <fcntl.h>
+#include <stdarg.h>
+#include <errno.h>
 //#include "base64.h"
 #define BUFLEN 1024
 
-class DexDataBuf{
-private:
+class DexDataCache{
+public:
        char * DexFileName;
        unsigned char *data;
        size_t length;
-public:
-       DexDataBuf(char *DexFilename,unsigned char *data,size_t length);
-       ~DexDataBuf(){};
-}
+
+       DexDataCache(char *DexFilename,unsigned char *data,size_t length);
+       ~DexDataCache();
+};
 
 class DexHacker{
 public:
 	void  writeDex2Encoded(unsigned char * data,size_t length);
 	//void  writeEncodedDex2Dex(const char *dexPath);
-	void  writeDexBufToFile(DexDataBuf *dexbuf);
+	void  writeDexBufToFile(DexDataCache *dexbuf);
 	char * getProcessName(char * buffer);
 };
 #endif /* defined(____DexHacker__) */

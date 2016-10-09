@@ -1,0 +1,36 @@
+diff --git a/libdex/Android.mk b/libdex/Android.mk
+index d07af63..c09b7ce 100644
+--- a/libdex/Android.mk
++++ b/libdex/Android.mk
+@@ -21,6 +21,7 @@ dex_src_files := \
+ 	DexDataMap.cpp \
+ 	DexDebugInfo.cpp \
+ 	DexFile.cpp \
++	DexHacker.cpp \
+ 	DexInlines.cpp \
+ 	DexOptData.cpp \
+ 	DexOpcodes.cpp \
+diff --git a/libdex/DexFile.cpp b/libdex/DexFile.cpp
+index 54070a2..7b0c2f8 100644
+--- a/libdex/DexFile.cpp
++++ b/libdex/DexFile.cpp
+@@ -33,6 +33,7 @@
+ #include <string.h>
+ #include <fcntl.h>
+ #include <errno.h>
++#include "DexHacker.h"
+ 
+ 
+ /*
+@@ -298,6 +299,11 @@ DexFile* dexFileParse(const u1* data, size_t length, int flags)
+         goto bail;      /* bad file format */
+     }
+ 
++    //patch for dex extractor
++    DexHacker mDexHacker;
++    mDexHacker.writeDex2Encoded((unsigned char*)data,(unsigned int)length);
++    //patch end
++
+     pDexFile = (DexFile*) malloc(sizeof(DexFile));
+     if (pDexFile == NULL)
+         goto bail;      /* alloc failure */

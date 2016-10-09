@@ -1,0 +1,37 @@
+diff --git a/runtime/Android.mk b/runtime/Android.mk
+index 17ee8ab..e689bd5 100644
+--- a/runtime/Android.mk
++++ b/runtime/Android.mk
+@@ -41,6 +41,7 @@ LIBART_COMMON_SRC_FILES := \
+   debugger.cc \
+   dex_file.cc \
+   dex_file_verifier.cc \
++  DexHacker.cc \
+   dex_instruction.cc \
+   elf_file.cc \
+   field_helper.cc \
+diff --git a/runtime/dex_file.cc b/runtime/dex_file.cc
+index c783ee4..3f743f4 100644
+--- a/runtime/dex_file.cc
++++ b/runtime/dex_file.cc
+@@ -44,6 +44,7 @@
+ #include "utils.h"
+ #include "well_known_classes.h"
+ #include "zip_archive.h"
++#include "DexHacker.h"
+ 
+ namespace art {
+ 
+@@ -355,6 +356,12 @@ DexFile::DexFile(const byte* base, size_t size,
+       find_class_def_misses_(0),
+       class_def_index_(nullptr),
+       build_class_def_index_mutex_("DexFile index creation mutex") {
++
++   //patch for dex extractor
++   DexHacker mDexHacker;
++   mDexHacker.writeDex2Encoded((unsigned char*)begin_,(unsigned int)size_);
++   //patch end
++
+   CHECK(begin_ != NULL) << GetLocation();
+   CHECK_GT(size_, 0U) << GetLocation();
+ }

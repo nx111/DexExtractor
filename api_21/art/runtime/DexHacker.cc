@@ -6,15 +6,17 @@
 //
 //
 
+#include <log/log.h>
 #include "DexHacker.h"
-static DexDataBuf* dexbuf_wait=NULL;
+
+static DexDataCache* dexbuf_wait=NULL;
 
 void DexHacker::writeDex2Encoded(unsigned char *data, size_t length){
    
 	char dexbuffer[64]={0};
 	char dexbufferNamed[128]={0};
-	sprintf(dexbuffer, "classes_%d", length);
-	ALOGE("--pacthed--  inject  .dex length %d  flag=%d",length,flags);
+	sprintf(dexbuffer, "classes_%d", (int)length);
+	ALOGE("--pacthed--  inject  .dex length %d",(int)length);
 #ifdef CODE_DVM
 	char bufferProcess[256]={0};
 
@@ -47,11 +49,11 @@ void DexHacker::writeDex2Encoded(unsigned char *data, size_t length){
 	if(dexbuf_wait != NULL){
 	     writeDexBufToFile(dexbuf_wait);
 	}
-	static DexDataBuf* dexbuf = new DexDataBuf(dexbufferNamed,data,length);
+	static DexDataCache* dexbuf = new DexDataCache(dexbufferNamed,data,length);
 	writeDexBufToFile(dexbuf);
 }
 
-void DexHacker::writeDexBufToFile(DexDataBuf *dexbuf);
+void DexHacker::writeDexBufToFile(DexDataCache *dexbuf)
 {
 	FILE *fp = fopen(dexbuf->DexFileName,"wb");
 	 
@@ -69,7 +71,7 @@ void DexHacker::writeDexBufToFile(DexDataBuf *dexbuf);
 		//base64_encode(dst, &dlen, dexbuf->data, length);
 
 		//fwrite(dst, dlen, 1, fp);
-		fwrite(dexbuf->data, sizeof(u1), dexbuf->length, fp);
+		fwrite(dexbuf->data, sizeof(unsigned char), dexbuf->length, fp);
 		ALOGE("--pacthed--  create file  end ");
 
 		//fflush(fp);
@@ -153,21 +155,21 @@ char * DexHacker::getProcessName(char * buffer){
 	return NULL;
 }
 
-DexDataBuf::DexDataBuf(char *DexFilename,unsigned char *data,size_t length)
+DexDataCache::DexDataCache(char *DexFilename,unsigned char *data,size_t length)
 {
-	if(NULL != this.DexFileName=malloc(strlen(DexFilename) + 1)
-		strcpy(this.DexFileName,DexFilename);
-	if(NULL != this.data = malloc(length))
-		memcpy(this.data,data,length);
+	if(NULL != (void*)(this->DexFileName=(char*)malloc(strlen(DexFilename) + 1)))
+		strcpy(this->DexFileName,DexFilename);
+	if(NULL != (void*)(this->data = (unsigned char*)malloc(length)))
+		memcpy(this->data,data,length);
 }
 
-DexDataBuf::~DexDataBuf()
+DexDataCache::~DexDataCache()
 {
-	if(this.DexFileName)
-		free(this.DexFileName);
-	if(this.data)
-		free(this.data);
-	this.DexFileName = NULL;
-	this.data = NULL;
+	if(this->DexFileName)
+		free(this->DexFileName);
+	if(this->data)
+		free(this->data);
+	this->DexFileName = NULL;
+	this->data = NULL;
 };
 
